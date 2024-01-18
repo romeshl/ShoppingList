@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Shopping List</h1>
+    <br />
+    <form>
+        <input id="item" type="text" placeholder="Item. eg: Tomato" required /> x
+        <input id="quantity" type="number" placeholder="Quantity. eg: 1" required />
+        <button onclick="addItem(event)">Add to List</button>
+    </form>
+    <p id="shopping-list-display"></p>
+    <hr />
+    <h1>Shopping Basket</h1>
+    <p>
+        Enter all the products you've put into your shopping basket seperated by
+        commas, to see if you've forgotten anything.
+    </p>
+    <form>
+        <input type="text" id="itemsInBasket" placeholder="Eg: Eggs, Milk, Flour ..." />
+        <button onclick="addToBasket(event)">Put items in basket</button>
+    </form>
+    <p id="items-still-to-buy-display"></p>
+    <script>
+        const shoppingList = [];
+        const item = document.getElementById("item");
+        const quantity = document.getElementById("quantity");
+        const display = document.getElementById("shopping-list-display");
+
+        const shoppingBasket = document.getElementById("itemsInBasket");
+        const itemsStillToBuyDisplay = document.getElementById("items-still-to-buy-display");
+
+        function addItem(event) {
+            event.preventDefault();
+            const itemToAdd = { item: item.value.trim(), quantity: quantity.value.trim() };
+            item.value = "";
+            quantity.value = "";
+            item.focus();
+            shoppingList.push(itemToAdd);
+            console.log(shoppingList);
+            displayListItem();
+        }
+
+        function displayListItem() {
+            display.innerHTML = "";
+            for (const item of shoppingList) {
+                display.innerHTML += `${item.item} x ${item.quantity
+                    }<span style="cursor: pointer" onclick="deleteItem(${shoppingList.indexOf(
+                        item
+                    )});"> &#10062 <br>`;
+            }
+        }
+
+        function deleteItem(index) {
+            shoppingList.splice(index, 1);
+            displayListItem();
+        }
+
+        function addToBasket(event) {
+            event.preventDefault();
+            const basket = shoppingBasket.value.toLowerCase().split(',').map(item => item.trim());
+
+            //console.log(basket);
+            const itemsStillToBuy = shoppingList.filter(function (itemEl) {
+                return !basket.includes(itemEl.item.toLowerCase());
+            })
+
+            if (itemsStillToBuy.length > 0) {
+                itemsStillToBuyDisplay.innerHTML = "Here are the items you still need to get:<br>";
+                itemsStillToBuy.forEach(item => { itemsStillToBuyDisplay.innerHTML += `${item.item} x ${item.quantity}<br>`;} );
+            }
+            else {
+                itemsStillToBuyDisplay.innerHTML = "You've added everything to the basket.";
+            }
+
+        }
+
+    </script>
+</body>
+
+</html>
